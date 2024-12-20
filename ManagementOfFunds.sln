@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementOfFunds", "ManagementOfFunds\ManagementOfFunds.csproj", "{DB7C48C5-63F6-4001-9A25-C28B30B8CC09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{DB7C48C5-63F6-4001-9A25-C28B30B8CC09}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{E98B98ED-DC0C-4FC9-81E8-713B790672BF}"
 EndProject
