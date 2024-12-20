@@ -1,4 +1,4 @@
-﻿namespace ManagementOfFunds.Implementation;
+﻿namespace Domain.Transactions;
 
 public enum TransactionType
 {

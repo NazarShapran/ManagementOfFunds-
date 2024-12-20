@@ -1,6 +1,8 @@
-﻿using ManagementOfFunds.Abstraction;
+﻿using Application.Abstraction.Managers;
+using Domain.Employees;
+using Domain.Transactions;
 
-namespace ManagementOfFunds.Implementation;
+namespace Application.Implementation.Managers;
 
 public class PayrollManager : IPayrollManager
 {

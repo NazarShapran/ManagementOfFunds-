@@ -1,6 +1,7 @@
-﻿using ManagementOfFunds.Implementation;
+﻿using Domain.Employees;
+using Domain.Transactions;
 
-namespace ManagementOfFunds.Abstraction;
+namespace Application.Abstraction.Managers;
 
 public interface IPayrollManager
 {
