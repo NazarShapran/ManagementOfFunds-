@@ -16,6 +16,4 @@ public class Transaction(
     public DateTime Date { get; private set; } = date;
     public TransactionType Type { get; private set; } = type;
     
-    public static Transaction New(TransactionId id, EmployeeId employeeId, decimal amount, DateTime date, TransactionType type) 
-        => new(id, employeeId, amount, date, type);
 }

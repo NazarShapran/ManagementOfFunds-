@@ -7,7 +7,4 @@ public class Employee(EmployeeId id, string name, string position, decimal salar
     public string Position { get; private set; } = position;
     public decimal Salary { get; private set; } = salary;
     
-    
-    public static Employee New(EmployeeId id, string name, string position, decimal salary) 
-        => new(id, name, position, salary);
 }

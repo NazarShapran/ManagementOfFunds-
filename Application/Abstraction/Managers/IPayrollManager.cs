@@ -5,9 +5,9 @@ namespace Application.Abstraction.Managers;
 
 public interface IPayrollManager
 {
-    void AddEmployee(Employee employee);
-    void RemoveEmployee(Guid employeeId);
-    void AddTransaction(Transaction transaction);
-    List<Transaction> GetTransactions(Guid employeeId);
-    decimal GetTotalPayments(DateTime startDate, DateTime endDate);
+    Task<Employee> AddEmployee(Employee employee);
+    Task RemoveEmployee(Guid employeeId);
+    Task<Transaction> AddTransaction(Transaction transaction);
+    Task<List<Transaction>> GetTransactions(Guid employeeId);
+    Task<decimal> GetTotalPayments(DateTime startDate, DateTime endDate);
 }

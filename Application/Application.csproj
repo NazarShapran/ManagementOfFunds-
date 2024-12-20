@@ -8,8 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Extensions\" />
-      <Folder Include="Implementation\Commands\Employees\" />
-      <Folder Include="Implementation\Commands\Transactions\" />
     </ItemGroup>
 
     <ItemGroup>
