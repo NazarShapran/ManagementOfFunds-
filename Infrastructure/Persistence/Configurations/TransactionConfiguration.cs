@@ -1,4 +1,5 @@
 ﻿using Domain.Transactions;
+using Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +13,12 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(x => x.Id).HasConversion(x => x.Value, x => new TransactionId(x));
 
         builder.Property(x => x.Amount).IsRequired();
-        builder.Property(x => x.Date).IsRequired();
+        
+        builder.Property(x => x.Date)
+            .IsRequired()
+            .HasConversion(new DateTimeUtcConverter())
+            .HasDefaultValueSql("timezone('utc', now())");
+        
         builder.Property(x => x.EmployeeId).IsRequired();
 
         builder.HasOne(x => x.Employee)

@@ -1,6 +1,10 @@
-﻿using Application.Abstraction.Managers;
+﻿using Application.Abstraction.ConsoleWrapper;
+using Application.Abstraction.Loggers;
+using Application.Abstraction.Managers;
 using Application.Abstraction.Queries;
 using Application.Abstraction.Repositories;
+using Application.Implementation.ConsoleWrapper;
+using Application.Implementation.Loggers;
 using Application.Implementation.Managers;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +34,6 @@ public static class ConfigurePersistence
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddRepositories();
-        services.AddManagers();
     } 
     private static void AddRepositories(this IServiceCollection services)
     {
@@ -41,9 +44,5 @@ public static class ConfigurePersistence
         services.AddScoped<TransactionRepository>();
         services.AddScoped<ITransactionsRepository>(provider => provider.GetRequiredService<TransactionRepository>());
         services.AddScoped<ITransactionsQueries>(provider => provider.GetRequiredService<TransactionRepository>());
-    }
-    private static void AddManagers(this IServiceCollection services)
-    {
-        services.AddSingleton<IPayrollManager, PayrollManager>();
     }
 }

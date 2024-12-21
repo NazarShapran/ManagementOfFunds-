@@ -7,8 +7,8 @@ public class Seeder(ApplicationDbContext context)
 {
     public async Task SeedAsync()
     {
-        await SeedEmployeesAsync();
-        await SeedTransactionsAsync();
+       if(!context.Employees.Any()) await SeedEmployeesAsync();
+       if(!context.Transactions.Any()) await SeedTransactionsAsync();
     }
 
     private async Task SeedEmployeesAsync()

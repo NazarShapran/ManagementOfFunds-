@@ -1,4 +1,5 @@
-﻿using Application.Abstraction.Managers;
+﻿using Application.Abstraction.Loggers;
+using Application.Abstraction.Managers;
 using Application.Abstraction.Queries;
 using Application.Abstraction.Repositories;
 using Domain.Employees;
@@ -10,61 +11,105 @@ public class PayrollManager(
     IEmployeesRepository employeesRepository,
     IEmployeesQueries employeesQueries,
     ITransactionsQueries transactionsQueries,
-    ITransactionsRepository transactionsRepository) : IPayrollManager
+    ITransactionsRepository transactionsRepository,
+    ILogger logger) : IPayrollManager
 {
     public async Task<Employee> AddEmployee(Employee employee)
     {
-        var existingEmployee = await employeesQueries.GetById(employee.Id);
-        if (existingEmployee != null)
+        try
         {
-            throw new InvalidOperationException($"Працівник із ID {employee.Id.Value} вже існує.");
+            var existingEmployee = await employeesQueries.GetById(employee.Id);
+            if (existingEmployee != null)
+            {
+                throw new InvalidOperationException($"Працівник з ID {employee.Id.Value} вже існує.");
+            }
+            return await employeesRepository.Create(employee);
         }
-        return await employeesRepository.Create(employee);
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Помилка при додаванні працівника з ID {employee.Id.Value}.");
+            throw;
+        }
     }
 
-    public async Task  RemoveEmployee(Guid employeeId)
+    public async Task RemoveEmployee(Guid employeeId)
     {
-        var employee = await employeesQueries.GetById(new EmployeeId(employeeId));
-        if (employee == null)
+        try
         {
-            throw new KeyNotFoundException($"Працівника з ID {employeeId} не знайдено.");
-        }
+            var employee = await employeesQueries.GetById(new EmployeeId(employeeId));
+            if (employee == null)
+            {
+                throw new KeyNotFoundException($"Працівника з ID {employeeId} не знайдено.");
+            }
 
-        await employeesRepository.Delete(employee);
+            await employeesRepository.Delete(employee);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Помилка при видаленні працівника з ID {employeeId}.");
+            throw;
+        }
     }
 
     public async Task<Transaction> AddTransaction(Transaction transaction)
     {
-        var employee = await employeesQueries.GetById(transaction.EmployeeId);
-        if (employee == null)
+        try
         {
-            throw new KeyNotFoundException($"Працівника з ID {transaction.EmployeeId.Value} не знайдено.");
+            var employee = await employeesQueries.GetById(transaction.EmployeeId);
+            if (employee == null)
+            {
+                throw new KeyNotFoundException($"Працівника з ID {transaction.EmployeeId.Value} не знайдено.");
+            }
+            
+            if (transaction.Amount <= 0)
+            {
+                throw new ArgumentException("Сума транзакції повинна бути більшою за 0.");
+            }
+            
+            return await transactionsRepository.Create(transaction);
         }
-        
-        if (transaction.Amount <= 0)
+        catch (Exception ex)
         {
-            throw new ArgumentException("Сума транзакції повинна бути більшою за 0.");
+            logger.LogError(ex, $"Помилка при додаванні транзакції для працівника з ID {transaction.EmployeeId.Value}.");
+            throw;
         }
-        
-        return await transactionsRepository.Create(transaction);
     }
 
     public async Task<List<Transaction>> GetTransactions(Guid employeeId)
     {
-        var transactions = await transactionsQueries.GetByEmployeeId(new EmployeeId(employeeId));
-        if (!transactions.Any())
+        try
         {
-            throw new KeyNotFoundException($"Для працівника з ID {employeeId} транзакцій не знайдено.");
+            var transactions = await transactionsQueries.GetByEmployeeId(new EmployeeId(employeeId));
+            if (!transactions.Any())
+            {
+                throw new KeyNotFoundException($"Для працівника з ID {employeeId} транзакцій не знайдено.");
+            }
+            logger.LogInfo($"Отримано {transactions.Count} транзакцій для працівника з ID {employeeId}");
+            return transactions;
         }
-        return transactions;
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Помилка при отриманні транзакцій для працівника з ID {employeeId}.");
+            throw;
+        }
     }
 
     public async Task<decimal> GetTotalPayments(DateTime startDate, DateTime endDate)
     {
-        var transactions = await transactionsQueries.GetAll();
+        try
+        {
+            var transactions = await transactionsQueries.GetAll();
+            
+            logger.LogInfo($"Отримано {transactions.Count} транзакцій.");
 
-        return transactions
-            .Where(t => t.Date >= startDate && t.Date <= endDate)
-            .Sum(t => t.Amount);
+            return transactions
+                .Where(t => t.Date >= startDate && t.Date <= endDate)
+                .Sum(t => t.Amount);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Помилка при отриманні загальної суми транзакцій за період з {startDate} по {endDate}.");
+            throw;
+        }
     }
 }
